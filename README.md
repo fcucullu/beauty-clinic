@@ -1,6 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Bloom
 
-## Getting Started
+Plataforma de gestion para clinicas de belleza y estetica.
+
+## Problema
+
+Las clinicas de belleza gestionan citas, planes, pagos y comunicacion con clientes usando herramientas desconectadas (WhatsApp personal, agendas de papel, Excel). Esto genera errores, huecos en la agenda y mala experiencia para el cliente.
+
+## Solucion
+
+Bloom es una plataforma SaaS white-label que centraliza toda la gestion de una clinica de belleza en una sola app:
+
+- **Portal Admin** (desktop-first): calendario de citas, gestion de clientes, servicios, profesionales, planes, finanzas y reporting
+- **Portal Cliente** (mobile-first PWA): reservar citas, ver planes, pagos, programa de fidelizacion
+
+Cada clinica tiene su propia marca (logo, colores, subdominio).
+
+## Audiencia
+
+Clinicas de belleza, centros de estetica, spas y profesionales independientes del sector belleza.
+
+## Features principales
+
+- Gestion de citas con calendario visual y optimizacion de huecos
+- Planes y bonos (sesiones usadas vs disponibles)
+- Pagos integrados con Stripe
+- Catalogo de productos
+- Ficha clinica por cliente (historial, fotos, notas)
+- Finanzas y reporting (KPIs, exportar CSV/PDF)
+- Programa de fidelizacion con puntos y referidos
+- Comunicacion via WhatsApp Business (recordatorios 96h/24h)
+- White-label: logo, colores, subdominio por clinica
+- PWA instalable desde el movil
+
+## Stack
+
+- Next.js 14 (App Router)
+- Tailwind CSS
+- Supabase (Postgres + Auth + Storage)
+- Stripe
+- WhatsApp Business API
+- Vercel + Cloudflare
+
+## Desarrollo
 
 First, run the development server:
 
