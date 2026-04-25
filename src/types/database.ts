@@ -81,3 +81,63 @@ export interface AppointmentWithDetails extends Appointment {
   professional: Professional & { user: User }
   service: Service
 }
+
+export type PlanSubscriptionStatus = 'active' | 'expired' | 'cancelled' | 'completed'
+export type PaymentType = 'plan_purchase' | 'service_payment' | 'refund'
+export type PaymentStatus = 'pending' | 'completed' | 'failed' | 'refunded'
+
+export interface Plan {
+  id: string
+  tenant_id: string
+  name: string
+  description: string | null
+  service_ids: string[]
+  total_sessions: number
+  price: number
+  currency: string
+  validity_days: number
+  is_active: boolean
+  stripe_price_id: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface PlanSubscription {
+  id: string
+  tenant_id: string
+  plan_id: string
+  client_id: string
+  sessions_used: number
+  sessions_total: number
+  status: PlanSubscriptionStatus
+  starts_at: string
+  expires_at: string
+  stripe_payment_intent_id: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface PlanSubscriptionWithDetails extends PlanSubscription {
+  plan: Plan
+  client: User
+}
+
+export interface Payment {
+  id: string
+  tenant_id: string
+  client_id: string
+  amount: number
+  currency: string
+  type: PaymentType
+  status: PaymentStatus
+  plan_subscription_id: string | null
+  appointment_id: string | null
+  stripe_payment_intent_id: string | null
+  stripe_checkout_session_id: string | null
+  description: string | null
+  created_at: string
+}
+
+export interface PaymentWithDetails extends Payment {
+  client: User
+}
