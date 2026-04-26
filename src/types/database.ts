@@ -33,6 +33,7 @@ export interface User {
   phone: string | null
   role: UserRole
   avatar_url: string | null
+  referral_code: string | null
   created_at: string
   updated_at: string
 }
