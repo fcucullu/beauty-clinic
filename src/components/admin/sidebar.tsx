@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useTenant } from '@/lib/tenant/context'
@@ -19,68 +20,90 @@ const navItems = [
 export function AdminSidebar() {
   const pathname = usePathname()
   const tenant = useTenant()
+  const [drawerOpen, setDrawerOpen] = useState(false)
+
+  const logo = tenant.logo_url ? (
+    <img src={tenant.logo_url} alt={tenant.name} className="h-8 w-8 rounded-lg object-cover" />
+  ) : (
+    <div className="h-8 w-8 rounded-lg bg-[var(--color-primary)] flex items-center justify-center text-white font-bold text-sm">
+      {tenant.name.charAt(0)}
+    </div>
+  )
+
+  const navLinks = navItems.map((item) => {
+    const isActive = pathname === item.href
+    return (
+      <Link
+        key={item.href}
+        href={item.href}
+        onClick={() => setDrawerOpen(false)}
+        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+          isActive
+            ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)]'
+            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+        }`}
+      >
+        <svg className="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
+        </svg>
+        {item.label}
+      </Link>
+    )
+  })
 
   return (
     <>
       {/* Desktop sidebar */}
       <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 bg-white border-r border-gray-200">
         <div className="flex items-center gap-3 px-6 py-5 border-b border-gray-100">
-          {tenant.logo_url ? (
-            <img src={tenant.logo_url} alt={tenant.name} className="h-8 w-8 rounded-lg object-cover" />
-          ) : (
-            <div className="h-8 w-8 rounded-lg bg-[var(--color-primary)] flex items-center justify-center text-white font-bold text-sm">
-              {tenant.name.charAt(0)}
-            </div>
-          )}
+          {logo}
           <span className="font-semibold text-gray-900 truncate">{tenant.name}</span>
         </div>
-
         <nav className="flex-1 px-3 py-4 space-y-1">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)]'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                }`}
-              >
-                <svg className="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
-                </svg>
-                {item.label}
-              </Link>
-            )
-          })}
+          {navLinks}
         </nav>
-
       </aside>
 
-      {/* Mobile bottom nav */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 pb-[env(safe-area-inset-bottom)] z-50">
-        <div className="flex items-center justify-around h-16">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex flex-col items-center gap-0.5 px-2 py-1.5 text-[10px] font-medium transition-colors ${
-                  isActive ? 'text-[var(--color-primary)]' : 'text-gray-400'
-                }`}
-              >
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
-                </svg>
-                {item.label}
-              </Link>
-            )
-          })}
+      {/* Mobile top bar + hamburger */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-50">
+        <div className="flex items-center justify-between px-4 h-14">
+          <div className="flex items-center gap-3">
+            {logo}
+            <span className="font-semibold text-gray-900 truncate">{tenant.name}</span>
+          </div>
+          <button
+            onClick={() => setDrawerOpen(true)}
+            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            <svg className="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+          </button>
         </div>
-      </nav>
+      </div>
+
+      {/* Mobile drawer overlay */}
+      {drawerOpen && (
+        <div className="lg:hidden fixed inset-0 z-[60]">
+          <div className="fixed inset-0 bg-black/50" onClick={() => setDrawerOpen(false)} onTouchEnd={() => setDrawerOpen(false)} />
+          <aside className="fixed top-0 left-0 bottom-0 w-72 bg-white shadow-xl flex flex-col">
+            <div className="flex items-center justify-between px-4 py-4 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                {logo}
+                <span className="font-semibold text-gray-900 truncate">{tenant.name}</span>
+              </div>
+              <button onClick={() => setDrawerOpen(false)} className="p-1 text-gray-400 hover:text-gray-600">
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+              {navLinks}
+            </nav>
+          </aside>
+        </div>
+      )}
     </>
   )
 }

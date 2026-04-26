@@ -8,7 +8,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
   return (
     <TenantProvider tenant={tenant}>
-      <div className="min-h-screen bg-gray-50 pb-20 lg:pb-0">
+      <div className="min-h-screen bg-gray-50 pt-14 lg:pt-0">
         <AdminSidebar />
         <main className="lg:pl-64">
           <div className="px-4 sm:px-6 lg:px-8 py-6">
