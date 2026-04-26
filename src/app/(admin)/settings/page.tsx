@@ -137,43 +137,37 @@ export default function SettingsPage() {
           {/* Colors */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">Colores</label>
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <label className="block text-xs text-gray-500 mb-1">Primario</label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="color"
-                    value={form.primary_color}
-                    onChange={(e) => setForm({ ...form, primary_color: e.target.value })}
-                    className="h-10 w-10 rounded-lg border border-gray-200 cursor-pointer"
-                  />
-                  <span className="text-xs text-gray-400 font-mono">{form.primary_color}</span>
+            <div className="space-y-4">
+              {([
+                { key: 'primary_color' as const, label: 'Primario' },
+                { key: 'secondary_color' as const, label: 'Secundario' },
+                { key: 'accent_color' as const, label: 'Acento' },
+              ]).map(({ key, label }) => (
+                <div key={key}>
+                  <label className="block text-xs text-gray-500 mb-1.5">{label}</label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="color"
+                      value={form[key]}
+                      onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+                      className="h-10 w-10 rounded-lg border border-gray-200 cursor-pointer flex-shrink-0"
+                    />
+                    <input
+                      type="text"
+                      value={form[key]}
+                      onChange={(e) => {
+                        let v = e.target.value
+                        if (!v.startsWith('#')) v = '#' + v
+                        if (/^#[0-9A-Fa-f]{0,6}$/.test(v)) setForm({ ...form, [key]: v })
+                      }}
+                      className="w-28 rounded-lg border border-gray-300 px-3 py-2 text-sm font-mono text-gray-900 focus:border-[var(--color-primary)] focus:outline-none"
+                      placeholder="#000000"
+                      maxLength={7}
+                    />
+                    <div className="h-10 flex-1 rounded-lg border border-gray-200" style={{ backgroundColor: form[key] }} />
+                  </div>
                 </div>
-              </div>
-              <div>
-                <label className="block text-xs text-gray-500 mb-1">Secundario</label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="color"
-                    value={form.secondary_color}
-                    onChange={(e) => setForm({ ...form, secondary_color: e.target.value })}
-                    className="h-10 w-10 rounded-lg border border-gray-200 cursor-pointer"
-                  />
-                  <span className="text-xs text-gray-400 font-mono">{form.secondary_color}</span>
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs text-gray-500 mb-1">Acento</label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="color"
-                    value={form.accent_color}
-                    onChange={(e) => setForm({ ...form, accent_color: e.target.value })}
-                    className="h-10 w-10 rounded-lg border border-gray-200 cursor-pointer"
-                  />
-                  <span className="text-xs text-gray-400 font-mono">{form.accent_color}</span>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 
