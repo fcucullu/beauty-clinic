@@ -7,6 +7,7 @@ import { Modal } from '@/components/ui/modal'
 import { useTenant } from '@/lib/tenant/context'
 import { createClient } from '@/lib/supabase/client'
 import type { AppointmentWithDetails, Service, User } from '@/types/database'
+import { findGaps } from '@/lib/scheduling/optimizer'
 
 type ViewMode = 'day' | 'week'
 
@@ -213,6 +214,47 @@ export default function AppointmentsPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Gaps / Schedule Optimization */}
+      {!loading && viewMode === 'day' && (() => {
+        const todayApts = appointments.filter(a => a.status !== 'cancelled')
+        const gaps = findGaps(todayApts, services)
+        const usableGaps = gaps.filter(g => g.minutes >= 15 && g.suggestedServices.length > 0)
+        if (usableGaps.length === 0) return null
+        return (
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <svg className="h-5 w-5 text-[var(--color-secondary)]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <h2 className="text-lg font-semibold text-gray-900">Huecos disponibles</h2>
+                <span className="text-sm text-gray-400">({usableGaps.length} detectados)</span>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {usableGaps.map((gap, i) => (
+                  <div key={i} className="flex items-start gap-3 p-3 bg-[var(--color-secondary)]/5 rounded-lg border border-[var(--color-secondary)]/20">
+                    <div className="text-center flex-shrink-0">
+                      <p className="text-sm font-bold text-[var(--color-secondary)]">{gap.start} - {gap.end}</p>
+                      <p className="text-xs text-gray-400">{gap.minutes} min</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">Servicios que caben:</p>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {gap.suggestedServices.map((s, j) => (
+                          <span key={j} className="text-xs bg-white border border-gray-200 text-gray-700 px-2 py-0.5 rounded-full">{s}</span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )
+      })()}
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Nueva Cita">
         <div className="space-y-4">
