@@ -28,14 +28,23 @@ const DEFAULT_TENANT: Tenant = {
 }
 
 export async function getTenant(slug?: string): Promise<Tenant> {
-  if (!slug) return DEFAULT_TENANT
-
   try {
     const supabase = await createClient()
+
+    if (slug) {
+      const { data } = await supabase
+        .from('bloom_tenants')
+        .select('*')
+        .eq('slug', slug)
+        .single()
+      return data || DEFAULT_TENANT
+    }
+
+    // No slug: load the first (demo) tenant from DB
     const { data } = await supabase
       .from('bloom_tenants')
       .select('*')
-      .eq('slug', slug)
+      .limit(1)
       .single()
 
     return data || DEFAULT_TENANT
